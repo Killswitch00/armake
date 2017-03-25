@@ -8,7 +8,7 @@ LIB = lib
 EXT =
 CC = gcc
 CFLAGS = -Wall -Wno-misleading-indentation -DVERSION=\"v$(VERSION)\" -std=gnu89 -ggdb
-CLIBS = -I$(LIB) -lm -lcrypto
+CLIBS = -I$(LIB) -L$(LIB) -lm -lcrypto -lmcpp
 
 $(BIN)/armake: \
         $(patsubst %.c, %.o, $(wildcard $(SRC)/*.c)) \

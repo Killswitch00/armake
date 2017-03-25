@@ -23,6 +23,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "mcpp_lib.h"
+
 
 #define MAXCONSTS 4096
 #define MAXARGS 32
