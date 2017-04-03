@@ -798,6 +798,10 @@ int rapify_file(char *source, char *target) {
         DeleteFile(temp_name);
 #endif
 
+        free(lineref->file_index);
+        free(lineref->line_number);
+        free(lineref);
+
         return success;
     }
 

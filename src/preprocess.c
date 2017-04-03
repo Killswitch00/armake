@@ -112,18 +112,20 @@ int find_file_helper(char *includepath, char *origin, char *includefolder, char 
 
     // relative include, this shit is easy
     if (includepath[0] != '\\') {
+        int i;
+
         strncpy(actualpath, origin, 2048);
-        char *target = actualpath + strlen(actualpath) - 1;
-        while (*target != PATHSEP && target >= actualpath)
-            target--;
-        strncpy(target + 1, includepath, 2046 - (target - actualpath));
+        for (i = 0; i < strlen(actualpath) && actualpath[i] != 0; i++)
+            actualpath[i] = (actualpath[i] == '/') ? '\\' : actualpath[i];
+
+        if (strchr(actualpath, '\\') == NULL)
+            strcpy(actualpath, includepath);
+        else
+            strcpy(strrchr(actualpath, '\\') + 1, includepath);
 
 #ifndef _WIN32
-        int i;
-        for (i = 0; i < strlen(actualpath); i++) {
-            if (actualpath[i] == '\\')
-                actualpath[i] = '/';
-        }
+        for (i = 0; i < strlen(actualpath) && actualpath[i] != 0; i++)
+            actualpath[i] = (actualpath[i] == '\\') ? '/' : actualpath[i];
 #endif
 
         return 0;
@@ -161,12 +163,15 @@ int find_file_helper(char *includepath, char *origin, char *includefolder, char 
 
         GetFullPathName(cwd, 2048, mask, NULL);
         sprintf(mask, "%s\\%s", mask, file.cFileName);
+
         if (file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
             if (!find_file_helper(includepath, origin, includefolder, actualpath, mask))
+                FindClose(handle);
                 return 0;
         } else {
             if (strcmp(filename, file.cFileName) == 0 && matches_includepath(mask, includepath, includefolder)) {
                 strncpy(actualpath, mask, 2048);
+                FindClose(handle);
                 return 0;
             }
         }
@@ -308,6 +313,8 @@ int resolve_includes(char *source, FILE *f_target, struct constant *constants, s
     }
 
     // Skip byte order mark if it exists
+    ptr = NULL;
+    buffsize = 0;
     if (fgetc(f_source) == 0xef)
         fseek(f_source, 3, SEEK_SET);
     else

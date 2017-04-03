@@ -5,20 +5,21 @@ DESTDIR =
 BIN = bin
 SRC = src
 LIB = lib
+SUFFIX =
 EXT =
 CC = gcc
 CFLAGS = -Wall -Wno-misleading-indentation -DVERSION=\"v$(VERSION)\" -std=gnu89 -ggdb
-CLIBS = -I$(LIB) -L$(LIB) -lm -lcrypto -lmcpp
+CLIBS = -I$(LIB) -L$(LIB) -lm -lcrypto
 
 $(BIN)/armake: \
         $(patsubst %.c, %.o, $(wildcard $(SRC)/*.c)) \
         $(patsubst %.c, %.o, $(wildcard $(LIB)/*.c))
     @mkdir -p $(BIN)
-    @echo " LINK $(BIN)/armake$(EXT)"
-    @$(CC) $(CFLAGS) -o $(BIN)/armake$(EXT) \
+    @echo " LINK $(BIN)/armake$(SUFFIX)$(EXT)"
+    @$(CC) $(CFLAGS) -o $(BIN)/armake$(SUFFIX)$(EXT) \
         $(patsubst %.c, %.o, $(wildcard $(SRC)/*.c)) \
         $(patsubst %.c, %.o, $(wildcard $(LIB)/*.c)) \
-        $(CLIBS)
+        $(CLIBS) -lmcpp$(SUFFIX)
 
 $(SRC)/%.o: $(SRC)/%.c
     @echo "  CC  $<"
@@ -46,10 +47,10 @@ clean:
     rm -rf $(BIN) $(SRC)/*.o $(LIB)/*.o armake_*
 
 win32:
-    "$(MAKE)" CC=i686-w64-mingw32-gcc CLIBS="-I$(LIB) -lm -lcrypto -lole32 -lgdi32 -static" EXT=_w32.exe
+    "$(MAKE)" CC=i686-w64-mingw32-gcc CLIBS="$(CLIBS) -lole32 -lgdi32 -static" SUFFIX=_w32 EXT=.exe
 
 win64:
-    "$(MAKE)" CC=x86_64-w64-mingw32-gcc CLIBS="-I$(LIB) -lm -lcrypto -lole32 -lgdi32 -static" EXT=_w64.exe
+    "$(MAKE)" CC=x86_64-w64-mingw32-gcc CLIBS="$(CLIBS) -lole32 -lgdi32 -static" SUFFIX=_w64 EXT=.exe
 
 docopt:
     mkdir tmp || rm -rf tmp/*
