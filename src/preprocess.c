@@ -383,24 +383,22 @@ int resolve_includes(char *source, FILE *f_target, struct constant *constants, s
                     in_string = buffer[i];
             }
 
-            if (buffer[i] == '/' && buffer[i+1] == '/') {
+            if (level_comment > 0) {
+                if (buffer[i] == '*' && buffer[i+1] == '/') {
+                    level_comment--;
+                    buffer[i] = ' ';
+                    buffer[i+1] = ' ';
+                } else {
+                    buffer[i] = ' ';
+                    continue;
+                }
+            } else if (buffer[i] == '/' && buffer[i+1] == '/') {
                 buffer[i+1] = 0;
                 buffer[i] = '\n';
             } else if (buffer[i] == '/' && buffer[i+1] == '*') {
                 level_comment++;
                 buffer[i] = ' ';
                 buffer[i+1] = ' ';
-            } else if (buffer[i] == '*' && buffer[i+1] == '/') {
-                level_comment--;
-                if (level_comment < 0)
-                    level_comment = 0;
-                buffer[i] = ' ';
-                buffer[i+1] = ' ';
-            }
-
-            if (level_comment > 0) {
-                buffer[i] = ' ';
-                continue;
             }
         }
 
