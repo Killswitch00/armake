@@ -57,27 +57,27 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
     bufptr = *lineptr;
     size = *n;
 
+    if (bufptr == NULL) {
+        size = 128;
+        if ((bufptr = malloc(size)) == NULL)
+            return -1;
+    }
+
     c = fgetc(stream);
     if (c == EOF)
         return -1;
 
-    if (bufptr == NULL) {
-        bufptr = malloc(128);
-        if (bufptr == NULL)
-            return -1;
-        size = 128;
-    }
     p = bufptr;
-    while(c != EOF) {
-        if ((p - bufptr) > (size - 1)) {
-            size = size + 128;
+    while (c != EOF) {
+        *p++ = c;
+
+        if ((p - bufptr) >= size) {
+            size += 128;
             bufptr = realloc(bufptr, size);
-            p = bufptr + size - 128;
             if (bufptr == NULL)
                 return -1;
+            p = bufptr + size - 128;
         }
-
-        *p++ = c;
 
         if (c == '\n')
             break;
