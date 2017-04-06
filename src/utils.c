@@ -38,11 +38,7 @@ void infof(char *format, ...) {
     vsprintf(buffer, format, argptr);
     va_end(argptr);
 
-#ifdef _WIN32
-    fprintf(stdout, "info: %s", buffer);
-#else
     fprintf(stdout, "%sinfo:%s %s", COLOR_GREEN, COLOR_RESET, buffer);
-#endif
 
     fflush(stdout);
 }
@@ -56,11 +52,7 @@ void debugf(char *format, ...) {
     vsprintf(buffer, format, argptr);
     va_end(argptr);
 
-#ifdef _WIN32
-    fprintf(stdout, "debug: %s", buffer);
-#else
     fprintf(stdout, "%sdebug:%s %s", COLOR_CYAN, COLOR_RESET, buffer);
-#endif
 
     fflush(stdout);
 }
@@ -77,11 +69,7 @@ void warningf(char *format, ...) {
     vsprintf(buffer, format, argptr);
     va_end(argptr);
 
-#ifdef _WIN32
-    fprintf(stderr, "warning: %s", buffer);
-#else
     fprintf(stderr, "%swarning:%s %s", COLOR_YELLOW, COLOR_RESET, buffer);
-#endif
 
     if (strchr(current_target, PATHSEP) == NULL)
         strcpy(filename, current_target);
@@ -152,11 +140,7 @@ void errorf(char *format, ...) {
     vsprintf(buffer, format, argptr);
     va_end(argptr);
 
-#ifdef _WIN32
-    fprintf(stderr, "error: %s", buffer);
-#else
     fprintf(stderr, "%serror:%s %s", COLOR_RED, COLOR_RESET, buffer);
-#endif
 
     fflush(stderr);
 }
