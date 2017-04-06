@@ -280,7 +280,6 @@ int resolve_includes(char *source, FILE *f_target, struct constant *constants, s
     char in_string = 0;
     char includepath[2048];
     char actualpath[2048];
-    void *temp;
     FILE *f_source;
 
     current_operation = OP_PREPROCESS;
@@ -448,17 +447,13 @@ int resolve_includes(char *source, FILE *f_target, struct constant *constants, s
 
             lineref->num_lines++;
             if (lineref->num_lines % LINEINTERVAL == 0) {
-                temp = malloc(sizeof(uint32_t) * (lineref->num_lines + LINEINTERVAL));
-                memcpy(temp, lineref->line_number, sizeof(uint32_t) * lineref->num_lines);
-                free(lineref->line_number);
-                lineref->line_number = (uint32_t *)temp;
-
-                temp = malloc(sizeof(uint32_t) * (lineref->num_lines + LINEINTERVAL));
-                memcpy(temp, lineref->file_index, sizeof(uint32_t) * lineref->num_lines);
-                free(lineref->file_index);
-                lineref->file_index = (uint32_t *)temp;
+                lineref->line_number = (uint32_t *)realloc(lineref->line_number,
+                        sizeof(uint32_t) * (lineref->num_lines + LINEINTERVAL));
+                lineref->file_index = (uint32_t *)realloc(lineref->file_index,
+                        sizeof(uint32_t) * (lineref->num_lines + LINEINTERVAL));
             }
         }
+
         free(buffer);
     }
 
