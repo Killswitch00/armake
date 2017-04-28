@@ -1,0 +1,3 @@
+[submodule "lib/mcpplib"]
+	path = lib/mcpplib
+	url = https://github.com/KoffeinFlummi/mcpplib
