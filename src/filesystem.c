@@ -283,8 +283,6 @@ int copy_file(char *source, char *target) {
     f_target = open(target, O_WRONLY | O_CREAT, 0666);
     if (f_target < 0) {
         close(f_source);
-        if (f_target >= 0)
-            close(f_target);
         return -3;
     }
 
